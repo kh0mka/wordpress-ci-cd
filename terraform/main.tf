@@ -123,14 +123,20 @@ resource "aws_key_pair" "public_instance_key" {
   public_key = var.public_key
 }
 
+module "cloudwatch" {
+  source    = "./modules/cloudwatch"
+  subnet_id = module.vpc.public_subnets[0]
+}
+
 resource "aws_instance" "public_instance" {
   ami           = data.aws_ami.getLatestUbuntu.id
   instance_type = "t3.micro"
 
-  key_name          = aws_key_pair.public_instance_key.key_name
-  security_groups   = [module.ec2_rds.security_group_id]
-  subnet_id         = module.vpc.public_subnets[0]
-  availability_zone = "eu-north-1a"
+  key_name             = aws_key_pair.public_instance_key.key_name
+  security_groups      = [module.ec2_rds.security_group_id]
+  subnet_id            = module.vpc.public_subnets[0]
+  availability_zone    = "eu-north-1a"
+  iam_instance_profile = module.cloudwatch.IAMInstanceProfileRoleName
 
   connection {
     type        = "ssh"
@@ -151,6 +157,7 @@ resource "aws_db_instance" "rds_instance" {
   multi_az               = false
   publicly_accessible    = false
   availability_zone      = "eu-north-1a"
+  identifier             = var.db_identifier
 
   engine            = "mysql"
   engine_version    = "5.7"

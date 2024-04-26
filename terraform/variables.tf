@@ -14,3 +14,8 @@ variable "aws_region" {
   type    = string
   default = "eu-north-1"
 }
+
+variable "db_identifier" {
+  type    = string
+  default = "wordpress-db-rds-connection-url"
+}
