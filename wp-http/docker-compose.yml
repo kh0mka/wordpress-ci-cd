@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  wordpress:
+    image: wordpress:php8.2-fpm
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: ${RDS_HOSTNAME}
+      WORDPRESS_DB_USER: kiryl
+      WORDPRESS_DB_PASSWORD: PrivateDatabaseTryToConnect99612
+      WORDPRESS_DB_NAME: wordpressdb
+    volumes:
+      - wordpress_data:/var/www/html
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=/var/www/html --email khomenokkg@gmail.com --agree-tos -d wp.diplomadomain.online
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - wordpress_data:/var/www/html
+
+  web:
+    image: nginx:latest
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./nginx:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+    ports:
+      - "80:80"
+    restart: always
+
+volumes:
+  wordpress_data:
+  certbot-etc:
