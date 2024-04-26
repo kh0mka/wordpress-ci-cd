@@ -33,7 +33,7 @@ jobs:
       - name: Planning Terraform
         id: plan
         run: |-
-          terraform plan \
+          terraform plan -destroy \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=wordpresscicd" \
