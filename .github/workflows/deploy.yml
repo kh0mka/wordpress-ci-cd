@@ -33,7 +33,7 @@ jobs:
       - name: Planning Terraform
         id: plan
         run: |-
-          terraform plan \
+          terraform plan -destroy \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=wordpresscicd" \
@@ -77,14 +77,13 @@ jobs:
           envs: PRIVATE_SSH_KEY,AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_DEFAULT_REGION,AWS_REGION,RDS_HOSTNAME,GH_ACCESS_TOKEN
           script: |-
             sudo apt update
+            sudo apt install docker.io docker-compose -y
             sudo su
             git clone https://$GH_ACCESS_TOKEN@github.com/kh0mka/wordpress-ci-cd.git
-            cd wp-http/
+            curl -sSLo ../wordpress-ci-cd/wp-https/nginx/options-ssl-nginx.conf https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf
+            cd wordpress-ci-cd/wp-http/
             echo "RDS_HOSTNAME=$RDS_HOSTNAME" > .env
-            cat .env
-#            sudo apt install docker.io -y
-#            sudo apt install awscli -y
-#            sudo docker stop miroappcont || true
-#            sudo docker rm miroappcont || true
-#            sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
-#            sudo docker run -d --name miroappcont -p 3000:3000 $REGISTRY/$REPOSITORY:$IMAGE_TAG
+            docker-compose up -d
+            docker-compose stop
+            cp -R ../wp-https/* .
+            docker-compose up -d
