@@ -54,7 +54,7 @@ jobs:
         run: |
           rds=$(terraform output rds_hostname)
           rds=$(echo $rds | sed 's/"//g')
-          echo "rds_hostname=$rds" >> GITHUB_OUTPUT
+          echo "rds_hostname=$rds" >> $GITHUB_OUTPUT
         working-directory: ./terraform
   deploy-app:
     runs-on: ubuntu-latest
