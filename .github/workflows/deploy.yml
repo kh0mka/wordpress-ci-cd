@@ -49,6 +49,7 @@ jobs:
         id: apply
         run: terraform apply PLAN
         working-directory: ./terraform
+
       - name: Trying to get EC2 Public IP
         id: set-ip
         run: |
@@ -107,7 +108,7 @@ jobs:
 
       - name: Setting CREDENTIALS_DBPASSWORD as env
         run: echo CREDENTIALS_DBPASSWORD=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBPASSWORD }} >> $GITHUB_ENV
-        
+
       - name: Connect to EC2 instance via ssh
         env:
           AWS_DEFAULT_REGION: eu-north-1
