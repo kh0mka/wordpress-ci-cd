@@ -18,7 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       SERVER_PUBLIC_IP: ${{ steps.set-ip.outputs.instance_public_ip }}
-      RDS_HOSTNAME: ${{ steps.set-rds-hostname.outputs.rds_hostname }}
+      CREDENTIALS_DBHOST: ${{ steps.get-credentials-dbhost.outputs.credentials_dbhost }}
+      CREDENTIALS_DBNAME: ${{ steps.get-credentials-dbname.outputs.credentials_dbname }}
+      CREDENTIALS_DBUSERNAME: ${{ steps.get-credentials-dbusername.outputs.credentials_dbusername }}
+      CREDENTIALS_DBPASSWORD: ${{ steps.get-credentials-dbpassword.outputs.credentials_dbpassword }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -49,12 +52,34 @@ jobs:
           ip=$(terraform output instance_public_ip | tr -d '[],' | tr -d '[:space:]')
           echo "instance_public_ip=$ip" >> $GITHUB_OUTPUT
         working-directory: ./terraform
-      - name: Trying to get RDS Hostname
-        id: set-rds-hostname
+
+      - name: Getting RDS hostname
+        id: get-credentials-dbhost
         run: |
-          rds=$(terraform output rds_hostname)
-          rds=$(echo $rds | sed 's/"//g')
-          echo "rds_hostname=$rds" >> $GITHUB_OUTPUT
+          dbhost=$(terraform output credentials_dbhost)
+          dbhost=$(echo $dbhost | sed 's/"//g')
+          echo "credentials_dbhost=$dbhost" >> $GITHUB_OUTPUT
+
+      - name: Getting RDS database name
+        id: get-credentials-dbname
+        run: |
+          dbname=$(terraform output credentials_dbname)
+          dbname=$(echo $dbname | sed 's/"//g')
+          echo "credentials_dbname=$dbname" >> $GITHUB_OUTPUT
+
+      - name: Getting RDS username
+        id: get-credentials-dbusername
+        run: |
+          dbusername=$(terraform output credentials_dbusername)
+          dbusername=$(echo $dbusername | sed 's/"//g')
+          echo "credentials_dbusername=$dbusername" >> $GITHUB_OUTPUT
+
+      - name: Getting RDS password
+        id: get-credentials-dbpassword
+        run: |
+          dbpassword=$(terraform output credentials_dbpassword)
+          dbpassword=$(echo $dbpassword | sed 's/"//g')
+          echo "credentials_dbpassword=$dbpassword" >> $GITHUB_OUTPUT
         working-directory: ./terraform
   deploy-app:
     runs-on: ubuntu-latest
@@ -62,10 +87,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setting an IP address as env variable
+
+      - name: Setting SERVER_PUBLIC_IP as env
         run: echo SERVER_PUBLIC_IP=${{ needs.infrastructure-deployment.outputs.SERVER_PUBLIC_IP }} >> $GITHUB_ENV
-      - name: Setting an RDS Hostname as env variable
-        run: echo RDS_HOSTNAME=${{ needs.infrastructure-deployment.outputs.RDS_HOSTNAME }} >> $GITHUB_ENV
+
+      - name: Setting CREDENTIALS_DBHOST as env
+        run: echo CREDENTIALS_DBHOST=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBHOST }} >> $GITHUB_ENV
+
+      - name: Setting CREDENTIALS_DBNAME as env
+        run: echo CREDENTIALS_DBNAME=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBNAME }} >> $GITHUB_ENV
+
+      - name: Setting CREDENTIALS_DBUSERNAME as env
+        run: echo CREDENTIALS_DBUSERNAME=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBUSERNAME }} >> $GITHUB_ENV
+
+      - name: Setting CREDENTIALS_DBPASSWORD as env
+        run: echo CREDENTIALS_DBPASSWORD=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBPASSWORD }} >> $GITHUB_ENV
+
       - name: Connect to EC2 instance via ssh
         env:
           AWS_DEFAULT_REGION: eu-north-1
@@ -82,7 +119,10 @@ jobs:
             git clone https://$GH_ACCESS_TOKEN@github.com/kh0mka/wordpress-ci-cd.git
             curl -sSLo wordpress-ci-cd/wp-https/nginx/options-ssl-nginx.conf https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf
             cd wordpress-ci-cd/wp-http/
-            echo "RDS_HOSTNAME=$RDS_HOSTNAME" > .env
+            echo "CREDENTIALS_DBHOST=$CREDENTIALS_DBHOST" > .env
+            echo "CREDENTIALS_DBNAME=$CREDENTIALS_DBNAME" >> .env
+            echo "CREDENTIALS_DBUSERNAME=$CREDENTIALS_DBUSERNAME" >> .env
+            echo "CREDENTIALS_DBPASSWORD=$CREDENTIALS_DBPASSWORD" >> .env
             sudo docker-compose up -d
             sleep 5
             sudo docker-compose stop

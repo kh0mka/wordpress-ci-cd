@@ -32,6 +32,14 @@ data "aws_internet_gateway" "default" {
   }
 }
 
+data "aws_secretsmanager_secret_version" "db_credentials" {
+  secret_id = "db-credentials"
+}
+
+locals {
+  db_credentials = jsondecode(data.aws_secretsmanager_secret_version.db_credentials.secret_string)
+}
+
 resource "aws_default_vpc" "get" {
   tags = {
     Name = "Default VPC"
@@ -162,10 +170,10 @@ resource "aws_db_instance" "rds_instance" {
   engine            = "mysql"
   engine_version    = "5.7"
   allocated_storage = 10
-  db_name           = "wordpressdb"
+  db_name           = local.db_credentials.dbname
 
-  username = "kiryl"
-  password = "PrivateDatabaseTryToConnect99612" // Just for test
+  username = local.db_credentials.username
+  password = local.db_credentials.password // Just for test
 
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true

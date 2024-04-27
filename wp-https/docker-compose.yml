@@ -7,10 +7,10 @@ services:
     env_file:
       - .env
     environment:
-      WORDPRESS_DB_HOST: ${RDS_HOSTNAME}
-      WORDPRESS_DB_USER: kiryl
-      WORDPRESS_DB_PASSWORD: PrivateDatabaseTryToConnect99612
-      WORDPRESS_DB_NAME: wordpressdb
+      WORDPRESS_DB_HOST: ${CREDENTIALS_DBHOST}
+      WORDPRESS_DB_USER: ${CREDENTIALS_DBUSERNAME}
+      WORDPRESS_DB_PASSWORD: ${CREDENTIALS_DBPASSWORD}
+      WORDPRESS_DB_NAME: ${CREDENTIALS_DBNAME}
     volumes:
       - wordpress_data:/var/www/html
 
