@@ -25,7 +25,7 @@ jobs:
       - name: Destroy Infrastructure
         id: destroy
         run: -|
-          terraform destroy -auto-approve \
+          terraform destroy --auto-approve \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=wordpresscicd"
