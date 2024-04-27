@@ -55,28 +55,24 @@ jobs:
           ip=$(terraform output instance_public_ip | tr -d '[],' | tr -d '[:space:]')
           echo "instance_public_ip=$ip" >> $GITHUB_OUTPUT
         working-directory: ./terraform
-
       - name: Getting RDS hostname
         id: get-credentials-dbhost
         run: |
           dbhost=$(terraform output credentials_dbhost)
           dbhost=$(echo $dbhost | sed 's/"//g')
           echo "credentials_dbhost=$dbhost" >> $GITHUB_OUTPUT
-
       - name: Getting RDS database name
         id: get-credentials-dbname
         run: |
           dbname=$(terraform output credentials_dbname)
           dbname=$(echo $dbname | sed 's/"//g')
           echo "credentials_dbname=$dbname" >> $GITHUB_OUTPUT
-
       - name: Getting RDS username
         id: get-credentials-dbusername
         run: |
           dbusername=$(terraform output credentials_dbusername)
           dbusername=$(echo $dbusername | sed 's/"//g')
           echo "credentials_dbusername=$dbusername" >> $GITHUB_OUTPUT
-
       - name: Getting RDS password
         id: get-credentials-dbpassword
         run: |
@@ -90,22 +86,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Setting SERVER_PUBLIC_IP as env
         run: echo SERVER_PUBLIC_IP=${{ needs.infrastructure-deployment.outputs.SERVER_PUBLIC_IP }} >> $GITHUB_ENV
-
       - name: Setting CREDENTIALS_DBHOST as env
         run: echo CREDENTIALS_DBHOST=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBHOST }} >> $GITHUB_ENV
-
       - name: Setting CREDENTIALS_DBNAME as env
         run: echo CREDENTIALS_DBNAME=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBNAME }} >> $GITHUB_ENV
-
       - name: Setting CREDENTIALS_DBUSERNAME as env
         run: echo CREDENTIALS_DBUSERNAME=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBUSERNAME }} >> $GITHUB_ENV
-
       - name: Setting CREDENTIALS_DBPASSWORD as env
         run: echo CREDENTIALS_DBPASSWORD=${{ needs.infrastructure-deployment.outputs.CREDENTIALS_DBPASSWORD }} >> $GITHUB_ENV
-
       - name: Connect to EC2 instance via ssh
         env:
           AWS_DEFAULT_REGION: eu-north-1
