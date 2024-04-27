@@ -27,6 +27,7 @@ jobs:
         uses: trstringer/manual-approval@v1.9.0
         timeout-minutes: 15
         with:
+          secret: ${{ secrets.GH_ACCESS_TOKEN }}
           approvers: kh0mka
           minimum-approvals: 1
           issue-title: "[CI/CD] Build infrastructure and deploy web service on AWS"
