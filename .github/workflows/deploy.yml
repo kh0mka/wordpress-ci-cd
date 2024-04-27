@@ -25,14 +25,13 @@ jobs:
     steps:
       - name: Waiting for approve deploy
         uses: trstringer/manual-approval@v1.9.0
+        timeout-minutes: 15
         with:
-          secrets: ${{ secrets.GH_ACCESS_TOKEN }}
           approvers: kh0mka
           minimum-approvals: 1
           issue-title: "[CI/CD] Build infrastructure and deploy web service on AWS"
           issue-body: "Please approve or deny the launch"
           exclude-workflow-initiator-as-approver: false
-          timeout-minutes: 15
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Terraform
