@@ -173,7 +173,7 @@ resource "aws_db_instance" "rds_instance" {
   db_name           = local.db_credentials.dbname
 
   username = local.db_credentials.username
-  password = local.db_credentials.password // Just for test
+  password = local.db_credentials.password
 
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
