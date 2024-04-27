@@ -23,6 +23,15 @@ jobs:
       CREDENTIALS_DBUSERNAME: ${{ steps.get-credentials-dbusername.outputs.credentials_dbusername }}
       CREDENTIALS_DBPASSWORD: ${{ steps.get-credentials-dbpassword.outputs.credentials_dbpassword }}
     steps:
+      - name: Waiting for approve deploy
+        uses: trstringer/manual-approval@v1.9.0
+        with:
+          approvers: kh0mka
+          minimum-approvals: 1
+          issue-title: "[CI/CD] Build infrastructure and deploy web service on AWS"
+          issue-body: "Please approve or deny the launch"
+          exclude-workflow-initiator-as-approver: false
+          timeout-minutes: 15
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Terraform
