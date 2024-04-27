@@ -1,0 +1,26 @@
+name: Manually destroy the infrastructure
+on: workflow_dispatch
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_STATE_BUCKET_NAME: ${{ secrets.AWS_TF_STATE_BUCKET_NAME }}
+
+jobs:
+  destroy-infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+      - name: Initializing Terraform
+        id: init
+        run: terraform init -backend-config="bucket=$TF_STATE_BUCKET_NAME" -backend-config="region=eu-north-1"
+        working-directory: ./terraform
+      - name: Destroy Infrastructure
+        id: destroy
+        run: terraform destroy -auto-approve
+        working-directory: ./terraform
