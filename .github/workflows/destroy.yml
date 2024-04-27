@@ -24,7 +24,7 @@ jobs:
         working-directory: ./terraform
       - name: Destroy Infrastructure
         id: destroy
-        run: -|
+        run: |-
           terraform destroy --auto-approve \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
