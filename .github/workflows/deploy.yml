@@ -33,13 +33,10 @@ jobs:
         id: init
         run: terraform init -backend-config="bucket=$TF_STATE_BUCKET_NAME" -backend-config="region=eu-north-1"
         working-directory: ./terraform
-      - name: Refresh terraform
-        id: refresh
-        run: terraform refresh
       - name: Planning Terraform
         id: plan
         run: |-
-          terraform plan \
+          terraform plan -destroy \
           -var="public_key=$PUBLIC_SSH_KEY" \
           -var="private_key=$PRIVATE_SSH_KEY" \
           -var="key_name=wordpresscicd" \

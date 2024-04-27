@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   wordpress:
+    container_name: wordpress
     image: wordpress:php8.2-fpm
     restart: always
     env_file:
@@ -23,6 +24,7 @@ services:
       - wordpress_data:/var/www/html
 
   web:
+    container_name: webnginx
     image: nginx:latest
     volumes:
       - wordpress_data:/var/www/html
