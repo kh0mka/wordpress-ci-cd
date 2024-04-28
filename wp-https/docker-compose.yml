@@ -18,7 +18,7 @@ services:
   certbot:
     container_name: certbot
     image: certbot/certbot:latest
-    command: certonly --webroot --webroot-path=/var/www/html --email khomenokkg@gmail.com --agree-tos -d wp.diplomadomain.online
+    command: certonly --webroot --webroot-path=/var/www/html --email khomenokkg@gmail.com --agree-tos -d wordpress.diplomadomain.online
     volumes:
       - certbot-etc:/etc/letsencrypt
       - wordpress_data:/var/www/html

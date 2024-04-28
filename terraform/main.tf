@@ -123,7 +123,7 @@ data "aws_ami" "getLatestUbuntu" {
 
 resource "aws_eip_association" "web-srv-eip" {
   instance_id   = aws_instance.public_instance.id
-  allocation_id = "eipalloc-011244477dcc86e94"
+  allocation_id = "eipalloc-0ccfea0274067619e"
 }
 
 resource "aws_key_pair" "public_instance_key" {
