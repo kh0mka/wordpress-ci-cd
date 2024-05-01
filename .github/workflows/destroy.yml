@@ -1,4 +1,5 @@
 # Author: Kiryl Homenok
+
 name: Manually destroy the infrastructure
 on: workflow_dispatch
 
