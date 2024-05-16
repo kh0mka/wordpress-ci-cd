@@ -1,5 +1,4 @@
 # Author: Kiryl Homenok
-
 name: Implementing CI/CD with Terraform
 on:
   push:
